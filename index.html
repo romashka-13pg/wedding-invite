@@ -131,47 +131,65 @@
     </div>
   </section>
 
+  <!-- библиотека для QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+
   <script>
     // ===== Настройки Telegram =====
-    const TOKEN = "8383274956:AAFABMDw8X4L_kxCidumGlalayx9Of07trw";
-    const CHAT_ID = "201054754";
+    const TOKEN = "8383274956:AAFABMDw8X4L_kxCidumGlalayx9Of07trw";   // ⚠️ вставь сюда токен, который дал BotFather
+    const CHAT_ID = "1046621509";      // твой Telegram ID
+    const URL_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
-    // Генерация QR-кода на сайт
-    const qr = new QRious({
+    // Генерация QR-кода
+    new QRious({
       element: document.getElementById('qrcode'),
       size: 200,
-      value: window.location.href // ссылка на этот сайт
+      value: "https://romashka-13pg.github.io/wedding-invite/"
     });
 
-    // Отправка формы в Telegram
-    document.getElementById('wedding-form').addEventListener('submit', async function(e) {
+    // Обработка формы
+    document
+Свадьба Романа и Дарьи — 06.06.2026
+romashka-13pg.github.io
+
+
+getElementById('wedding-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      const data
 
+      const formData = new FormData(this);
+      let message = "<b>Новая анкета гостя 💌</b>\n";
+      message += `<b>Имя:</b> ${formData.get("name")}\n`;
+      message += `<b>Присутствие:</b> ${formData.get("attendance")}\n`;
+      message += `<b>Алкоголь:</b> ${formData.get("drink") || "—"}\n`;
+      message += `<b>Еда:</b> ${formData.get("food") || "—"}\n`;
+      message += `<b>Пожелания:</b> ${formData.get("wishes") || "—"}\n`;
 
-Object.fromEntries(new FormData(this).entries());
-      const message = `
-💌 Новый ответ:
-👤 Имя: ${data.name}
-✅ Присутствие: ${data.attendance}
-🍷 Алкоголь: ${data.drink}
-🥘 Блюдо: ${data.food}
-💭 Пожелания: ${data.wishes || "-"}
-      `;
-
-      await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+      fetch(URL_API, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json"
+        },
         body: JSON.stringify({
           chat_id: CHAT_ID,
+          parse_mode: "HTML",
           text: message
         })
+      })
+      .then(res => res.json())
+      .then(result => {
+        if (result.ok) {
+          alert("Спасибо! Ваша анкета отправлена 😊");
+          document.getElementById('wedding-form').reset();
+        } else {
+          alert("Ошибка: " + JSON.stringify(result));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Ошибка сети.");
       });
-
-      alert("Спасибо за ответ! Мы получили ваше сообщение 💖");
-      this.reset();
     });
   </script>
 </body>
-</html> =
+</html>.
